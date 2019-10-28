@@ -26,12 +26,12 @@ public class Robot extends TimedRobot {
 
   Joystick leftJoystick = new Joystick(0);
 
-  Encoder leftEncoder = new Encoder (0, 1, false, CounterBase.EncodingType.k1X);
-  Encoder rightEncoder = new Encoder (2, 3, false, CounterBase.EncodingType.k1X);
+  Encoder leftEncoder = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
+  Encoder rightEncoder = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
 
   AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
 
-  public Robot(){
+  public Robot() {
     motorRight1.setInverted(true);
     motorRight2.setInverted(true);
     motorRight3.setInverted(true);
@@ -66,8 +66,8 @@ public class Robot extends TimedRobot {
       rightEncoder.reset();
       navx.reset();
     }
-    }
   }
+  
 
   @Override
   public void autonomousInit() {
