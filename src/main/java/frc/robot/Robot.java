@@ -63,26 +63,32 @@ public class Robot extends TimedRobot {
     public void robotInit() {
     }
 
-    @Override
-    public void robotPeriodic() {
-        SmartDashboard.putNumber("leftEncoderValue", leftEncoder.get());
-        SmartDashboard.putNumber("rightEncoderValue", rightEncoder.get());
+  @Override
+  public void robotPeriodic() {
 
-        SmartDashboard.putNumber("heading", navx.getYaw());
-    }
+    SmartDashboard.putNumber("leftEncoderValue", leftEncoder.get());
+    SmartDashboard.putNumber("rightEncoderValue", rightEncoder.get());
+    SmartDashboard.putNumber("heading", navx.getYaw());
+
+
+  }
 
     @Override
     public void disabledInit() {
     }
 
-    @Override
-    public void disabledPeriodic() {
-        if (leftJoystick.getRawButton(4)) {
-            leftEncoder.reset();
-            rightEncoder.reset();
-            navx.reset();
-        }
+  @Override
+  public void disabledPeriodic() {
+
+    if (leftJoystick.getRawButton(4)) {
+
+      leftEncoder.reset();
+      rightEncoder.reset();
+      navx.reset();
+
     }
+
+  }
 
     @Override
     public void autonomousInit() {
@@ -135,6 +141,7 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
     }
+
 
 
 }
