@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
       navx.reset();
     }
   }
-  
+
 
   @Override
   public void autonomousInit() {
