@@ -97,14 +97,14 @@ public class Robot extends TimedRobot {
 
         double leftSpeed = 0;
         double rightSpeed = 0;
-        double correction = 0.1;
+        double correction = 0.01;
         double joyY = -leftJoystick.getY();
         double joyX = leftJoystick.getX();
 
         leftSpeed = joyY + joyX;
         rightSpeed = joyY - joyX;
 
-        setDrivePower(leftSpeed, rightSpeed);
+        //setDrivePower(leftSpeed, rightSpeed);
 
         if (leftJoystick.getRawButton(1)) {
 
