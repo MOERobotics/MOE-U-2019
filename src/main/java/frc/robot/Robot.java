@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends TimedRobot {
-  TalonSRX testTalon;
 
   TalonSRX motorLeft1 = new TalonSRX(12);
   TalonSRX motorLeft2 = new TalonSRX(13);
@@ -30,6 +29,8 @@ public class Robot extends TimedRobot {
   Encoder rightEncoder = new Encoder(2,3, false, CounterBase.EncodingType.k1X);
 
   AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
+
+  boolean button10 = false;
 
   public Robot(){
     motorRight1.setInverted(true);
@@ -84,11 +85,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-
+    leftEncoder.reset();
+    rightEncoder.reset();
   }
 
   @Override
   public void teleopPeriodic() {
+
+    if(leftJoystick.getRawButton(1)){
+      button10 = false;
+    }
 
     //double speedPct = 100;
 
@@ -102,19 +108,47 @@ public class Robot extends TimedRobot {
     //motorRight2.set(ControlMode.PercentOutput, speedPct);
     //motorRight3.set(ControlMode.PercentOutput, speedPct);
 
-    double  leftSpeed = 0;
+    double leftSpeed = 0;
     double rightSpeed = 0;
+    double correction = 0.20;
+    double negativeCorrection = -0.20;
 
     double joyY = - leftJoystick.getY();
     double joyX =   leftJoystick.getX();
 
-    leftSpeed = joyY +  joyX;
-    rightSpeed = joyY - joyX;
+    // leftSpeed = joyY +  joyX;
+    // rightSpeed = joyY - joyX;
 
     //please no bully the human
-    motorLeft1.set(ControlMode.PercentOutput,   leftSpeed);
-    motorLeft2.set(ControlMode.PercentOutput,   leftSpeed);
-    motorLeft3.set(ControlMode.PercentOutput,   leftSpeed);
+    // motorLeft1.set(ControlMode.PercentOutput,  leftSpeed);
+    // motorLeft2.set(ControlMode.PercentOutput,  leftSpeed);
+    // motorLeft3.set(ControlMode.PercentOutput,  leftSpeed);
+    // motorRight1.set(ControlMode.PercentOutput, rightSpeed);
+    // motorRight2.set(ControlMode.PercentOutput, rightSpeed);
+    // motorRight3.set(ControlMode.PercentOutput, rightSpeed);
+
+    if(leftJoystick.getRawButton(10)) {
+      button10 = true;
+    }
+    if(button10){
+      if(navx.getYaw() > 0){
+          leftSpeed = correction;
+          rightSpeed = negativeCorrection;
+      }
+      else if(navx.getYaw() <= 0){
+          leftSpeed = negativeCorrection;
+          rightSpeed = correction;
+      }
+      if(navx.getYaw() > 178 || navx.getYaw() < -178){
+        leftSpeed = 0;
+        rightSpeed = 0;
+        button10 = false;
+      }
+    }
+
+    motorLeft1.set(ControlMode.PercentOutput, leftSpeed);
+    motorLeft2.set(ControlMode.PercentOutput, leftSpeed);
+    motorLeft3.set(ControlMode.PercentOutput, leftSpeed);
     motorRight1.set(ControlMode.PercentOutput, rightSpeed);
     motorRight2.set(ControlMode.PercentOutput, rightSpeed);
     motorRight3.set(ControlMode.PercentOutput, rightSpeed);
