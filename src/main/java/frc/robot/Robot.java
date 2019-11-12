@@ -32,6 +32,8 @@ public class Robot extends TimedRobot {
 
     AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
 
+    private boolean backwardPressed;
+
     public Robot() {
         motorRight1.setInverted(true);
         motorRight2.setInverted(true);
@@ -59,7 +61,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("leftEncoderValue", leftEncoder.get());
         SmartDashboard.putNumber("rightEncoderValue", rightEncoder.get());
         SmartDashboard.putNumber("heading", navx.getYaw());
-
 
     }
 
@@ -90,36 +91,28 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        leftEncoder.reset();
+        rightEncoder.reset();
+        navx.reset();
     }
 
     @Override
     public void teleopPeriodic() {
+        if (leftJoystick.getRawButton(8)) {
+            backwardPressed = true;
+        } else if(leftJoystick.getRawButton(1)){
+            backwardPressed = false;
+        }
 
-        double leftSpeed = 0;
-        double rightSpeed = 0;
-        double correction = 0.01;
-        double joyY = -leftJoystick.getY();
-        double joyX = leftJoystick.getX();
+        if (backwardPressed) {
 
-        leftSpeed = joyY + joyX;
-        rightSpeed = joyY - joyX;
-
-        //setDrivePower(leftSpeed, rightSpeed);
-
-        if (leftJoystick.getRawButton(1)) {
-
-            if (leftEncoder.get() > rightEncoder.get()) {
-                rightSpeed += correction;
-            } else if (rightEncoder.get() > leftEncoder.get()) {
-                leftSpeed += correction;
+            if (leftEncoder.get() > -2754) {
+                setDrivePower(-0.25, -0.25);
             } else {
-                rightSpeed = 0.25;
-                leftSpeed = 0.25;
+                setDrivePower(0.0, 0.0);
+                backwardPressed = false;
             }
 
-            setDrivePower(leftSpeed, rightSpeed);
-        } else {
-            setDrivePower(0.0, 0.0);
         }
     }
 
