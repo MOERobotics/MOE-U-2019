@@ -18,7 +18,7 @@ public class Robot extends TimedRobot {
     TalonSRX testTalon;
 
 
-    TalonSRX motorLeft1 = new TalonSRX(12);
+    TalonSRX motorLeft1 = new TalonSRX(12); //TalonSRX = speed controller
     TalonSRX motorLeft2 = new TalonSRX(13);
     TalonSRX motorLeft3 = new TalonSRX(14);
     TalonSRX motorRight1 = new TalonSRX(1);
@@ -28,17 +28,18 @@ public class Robot extends TimedRobot {
     Joystick leftJoystick = new Joystick(0);
 
 
-    Encoder leftEncoder = new Encoder(0,1, false, CounterBase.EncodingType.k1X);
-    Encoder rightEncoder = new Encoder(2,3, false, CounterBase.EncodingType.k1X);
+    Encoder leftEncoder = new Encoder(0, 1, false, CounterBase.EncodingType.k1X); //Encoder = motor diagnostics
+    Encoder rightEncoder = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
 
 
+    double goalYaw; //for turning left and right 90deg
+    boolean isTurningLeft;
 
 
+    AHRS navx; //navx = directional stuff
 
-    AHRS navx;
-
-    public Robot(){
-        motorRight1.setInverted(true);
+    public Robot() {
+        motorRight1.setInverted(true); //motors...duh
         motorRight2.setInverted(true);
         motorRight3.setInverted(true);
 
@@ -50,45 +51,43 @@ public class Robot extends TimedRobot {
         motorRight2.setNeutralMode(NeutralMode.Brake);
         motorRight3.setNeutralMode(NeutralMode.Brake);
 
-        AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
+        navx = new AHRS(SPI.Port.kMXP, (byte) 50);
 
         navx.getYaw();
 
     }
 
 
-
-
     @Override
     public void robotInit() {
     }
 
-  @Override
-  public void robotPeriodic() {
+    @Override
+    public void robotPeriodic() {
 
-    SmartDashboard.putNumber("leftEncoderValue", leftEncoder.get());
-    SmartDashboard.putNumber("rightEncoderValue", rightEncoder.get());
-    SmartDashboard.putNumber("heading", navx.getYaw());
+        SmartDashboard.putNumber("leftEncoderValue", leftEncoder.get()); //Screen information
+        SmartDashboard.putNumber("rightEncoderValue", rightEncoder.get());
+        SmartDashboard.putNumber("heading ", navx.getYaw());
 
 
-  }
+    }
 
     @Override
     public void disabledInit() {
     }
 
-  @Override
-  public void disabledPeriodic() {
+    @Override
+    public void disabledPeriodic() {
 
-    if (leftJoystick.getRawButton(4)) {
+        if (leftJoystick.getRawButton(4)) {
 
-      leftEncoder.reset();
-      rightEncoder.reset();
-      navx.reset();
+            leftEncoder.reset();
+            rightEncoder.reset();
+            navx.reset();
+
+        }
 
     }
-
-  }
 
     @Override
     public void autonomousInit() {
@@ -100,38 +99,98 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        navx.reset(); //resets Yaw (to face current direction)
     }
 
     @Override
     public void teleopPeriodic() {
 
-        double speedPct = 100;
+        //speedPct = - leftJoystick.getY();
 
-        speedPct = - leftJoystick.getY();
 
-        //initiates juggernaut
-        // motorLeft1.set(ControlMode.PercentOutput, speedPct);
-        // motorLeft2.set(ControlMode.PercentOutput, speedPct);
-        // motorLeft3.set(ControlMode.PercentOutput, speedPct);
-        // motorRight1.set(ControlMode.PercentOutput,speedPct);
-        // motorRight2.set(ControlMode.PercentOutput,speedPct);
-        // motorRight3.set(ControlMode.PercentOutput,speedPct);
+        double leftPower = 0;
+        double rightPower = 0;
+        double currentYaw = navx.getYaw();
 
-        double leftSpeed = 0;
-        double rightSpeed = 0;
 
-        double joyY = - leftJoystick.getY();
-        double joyX = leftJoystick.getX();
+        //double joyY = - leftJoystick.getY(); //inverted Y-axis
+        //double joyX = leftJoystick.getX();
 
-        leftSpeed = joyY + joyX;
-        rightSpeed = joyY - joyX;
+        //leftPower = joyY + joyX;
+        //rightPower = joyY - joyX;
 
-        motorLeft1.set(ControlMode.PercentOutput, leftSpeed);
-        motorLeft2.set(ControlMode.PercentOutput, leftSpeed);
-        motorLeft3.set(ControlMode.PercentOutput, leftSpeed);
-        motorRight1.set(ControlMode.PercentOutput,rightSpeed);
-        motorRight2.set(ControlMode.PercentOutput,rightSpeed);
-        motorRight3.set(ControlMode.PercentOutput,rightSpeed);
+
+        if (leftJoystick.getRawButton(1)) { //forward from 0 Yaw (keeps Yaw close to 0)
+            if (currentYaw > 1) { //0 is the sweet spot
+                rightPower = .25;
+                leftPower = .2;
+            } else if (currentYaw < -1) {
+                rightPower = .2;
+                leftPower = .25;
+            } else {
+                rightPower = .25;
+                leftPower = .25;
+            }
+        }
+
+        double leftEncode = leftEncoder.get();
+        double rightEncode = rightEncoder.get();
+
+
+        //HAS NOT BEEN TESTED!!
+            if(leftJoystick.getRawButtonPressed(5)){ //acknowledge turing left on button 5 press
+                goalYaw = currentYaw - 90; //-90 is sweet spot
+                isTurningLeft = true;
+                }
+
+            if(isTurningLeft){ //turn left 90deg
+                if (currentYaw > (goalYaw + 3)) {
+                    rightPower = .2;
+                    leftPower = -.2;
+                } else if (currentYaw < (goalYaw - 3)) {
+                    rightPower = -.2;
+                    leftPower = .2;
+                } else{
+                    isTurningLeft = false;
+                }
+            }
+
+
+
+
+        /*
+        if(leftJoystick.getRawButton(1)){ //forward from Encoders
+            if(leftEncode ...){
+                rightPower = .25;
+                leftPower = .2;
+            }
+           if(rightEncode ...){
+                    rightPower = .2;
+                    leftPower = .25;
+                } else {
+                    rightPower = .25;
+                    leftPower = .25;
+                }
+        }
+
+
+
+         if(true){ //forward from set angle
+
+
+
+        }
+
+         */
+
+
+        motorLeft1.set(ControlMode.PercentOutput, leftPower);
+        motorLeft2.set(ControlMode.PercentOutput, leftPower);
+        motorLeft3.set(ControlMode.PercentOutput, leftPower);
+        motorRight1.set(ControlMode.PercentOutput, rightPower);
+        motorRight2.set(ControlMode.PercentOutput, rightPower);
+        motorRight3.set(ControlMode.PercentOutput, rightPower);
+
     }
 
     @Override
@@ -141,7 +200,6 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
     }
-
 
 
 }
