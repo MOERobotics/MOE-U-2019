@@ -30,6 +30,7 @@ public class Robot extends TimedRobot {
 
   AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
   boolean buttonNorth = false;
+  boolean button10 = false;
 
   public Robot() {
     motorRight1.setInverted(true);
@@ -90,7 +91,9 @@ public class Robot extends TimedRobot {
 
       if (leftJoystick.getRawButton(1)){
           buttonNorth = false;
+          button10 = false;
       }
+
     //double speedPct = 100;
     //
     //speedPct = - leftJoystick.getY();
@@ -105,6 +108,8 @@ public class Robot extends TimedRobot {
 
       double leftSpeed = 0;
       double rightSpeed = 0;
+      double correction = 0.20;
+      double negativeCorrection = -0.20;
 
     double joyY = -leftJoystick.getY();
     double joyX = leftJoystick.getX();
@@ -114,49 +119,6 @@ public class Robot extends TimedRobot {
     //make sure to build every time you boot up build
     int buttonHold = 1;
 
-    //if pressing button 1, robot rolls straight ahead slowly
-
-      /**
-      //find a way to reset navx when first pressed
-      boolean firstHold = false;
-
-      if (!leftJoystick.getRawButton(buttonHold)){
-          firstHold = true;
-      }
-       if (leftJoystick.getRawButton(buttonHold)) {
-          if (firstHold == true) {
-              navx.reset();
-          }
-          //firstHold = false;
-
-          double currentYaw = navx.getYaw();
-          leftSpeed = 0.25;
-          rightSpeed = 0.25;
-
-          if (currentYaw > 1) {
-              rightSpeed = 0.30;
-
-          } else if (currentYaw < -1) {
-              leftSpeed = 0.30;
-
-          }
-      }
-
-
-
-       if (leftJoystick.getRawButton(buttonHold)) {
-       leftSpeed = 0.25;
-       rightSpeed = 0.25;
-
-        if (leftEncoder.get() - rightEncoder.get() > 5) {
-            rightSpeed = 0.30;
-         } else if (leftEncoder.get() - rightEncoder.get() < -5) {
-            leftSpeed = 0.30;
-         }
-       }
-       */
-
-      //never reset navx
       //turn to North
       if (leftJoystick.getRawButton(9)){
           buttonNorth = true;
@@ -174,6 +136,26 @@ public class Robot extends TimedRobot {
               rightSpeed = -0.20;
           } else {
               buttonNorth = false;
+          }
+      }
+
+      //turn to South
+      if(leftJoystick.getRawButton(10)) {
+          button10 = true;
+      }
+      if(button10){
+          if(navx.getYaw() > 0){
+              leftSpeed = correction;
+              rightSpeed = negativeCorrection;
+          }
+          else if(navx.getYaw() <= 0){
+              leftSpeed = negativeCorrection;
+              rightSpeed = correction;
+          }
+          if(navx.getYaw() > 178 || navx.getYaw() < -178){
+              leftSpeed = 0;
+              rightSpeed = 0;
+              button10 = false;
           }
       }
 
