@@ -31,6 +31,11 @@ public class Robot extends TimedRobot {
 
   AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
 
+  double currentRotation = 0;
+  double rightTurn = 0;
+
+  int firstCheck = 1;
+
   public Robot() {
     motorRight1.setInverted(true);
     motorRight2.setInverted(true);
@@ -79,25 +84,33 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    currentRotation = 0;
+    rightTurn = 0;
+    firstCheck = 1;
+    input = 0;
   }
 
   @Override
   public void teleopPeriodic() {
-
-    double leftSpeed = 0;
-    double rightSpeed = 0;
-    double joyY =  - leftJoystick.getY();
-    double joyX = leftJoystick.getX();
-
-    leftSpeed = joyY + joyX;
-    rightSpeed = joyY - joyX;
-
-     motorLeft1.set(ControlMode.PercentOutput, leftSpeed);
-     motorLeft2.set(ControlMode.PercentOutput, leftSpeed);
-     motorLeft3.set(ControlMode.PercentOutput, leftSpeed);
-     motorRight1.set(ControlMode.PercentOutput, rightSpeed);
-     motorRight2.set(ControlMode.PercentOutput, rightSpeed);
-     motorRight3.set(ControlMode.PercentOutput, rightSpeed);
+     double leftSpeed = 0;
+     double rightSpeed = 0;
+     if (leftJoystick.getRawButton(7)) {
+     firstCheck = 0;
+     }
+     if ((firstCheck == 0) && (leftEncoder.get() < 2754)) {
+     leftSpeed = .25;
+     rightSpeed = .25;
+     }
+     else {
+     leftEncoder.reset();
+     firstCheck = 1;
+     }
+     motorLeft1.set(ControlMode.PercentOutput, (leftSpeed));
+     motorLeft2.set(ControlMode.PercentOutput, (leftSpeed));
+     motorLeft3.set(ControlMode.PercentOutput, (leftSpeed));
+     motorRight1.set(ControlMode.PercentOutput, (rightSpeed));
+     motorRight2.set(ControlMode.PercentOutput, (rightSpeed));
+     motorRight3.set(ControlMode.PercentOutput, (rightSpeed));
   }
 
   @Override
