@@ -38,17 +38,15 @@ public class Robot extends TimedRobot {
 
 	RobotControlMode currentControlMode = RobotControlMode.MANUAL_CONTROL;
 
-	double targetYaw = 0;
+	double targetYaw     = 0;
 	double yawCorrection = 0;
 	FuntionalPIDSource.Rate navxYawReader = new FuntionalPIDSource.Rate(() -> navx.getYaw());
 	PIDOutput correctionWriter = (double correction) -> yawCorrection = correction + (Math.signum(correction) * 0.2);
 
-	boolean manualControl = true;
-
 	PIDController yawCorrector = new PIDController(
-		0.06,
 		0.001,
 		0,
+		0.01,
 		navxYawReader,
 		correctionWriter
 	) {{
@@ -81,6 +79,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber( "leftEncoderValue",             leftEncoder.get());
 		SmartDashboard.putNumber("rightEncoderValue",            rightEncoder.get());
 		SmartDashboard.putNumber(          "heading",                 navx.getYaw());
+		SmartDashboard.putNumber(    "targetHeading",                     targetYaw);
+		SmartDashboard.putNumber(    "PIDCorrection",                 yawCorrection);
 		SmartDashboard.putNumber(    "targetHeading",                     targetYaw);
 		SmartDashboard.putString(      "controlMode", currentControlMode.toString());
 	}
@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
 						continue;
 					}
 
-					double maxSpeed = 0.4;
+					double maxSpeed = 0.2;
 					double turnPower = maxSpeed * yawCorrection;
 					leftSpeed = turnPower;
 					rightSpeed = -turnPower;
