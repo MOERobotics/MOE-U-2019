@@ -29,6 +29,7 @@ public class Robot extends TimedRobot {
   Encoder rightEncoder = new Encoder(2,3, false, CounterBase.EncodingType.k1X);
 
   AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
+  boolean buttonNorth = false;
 
   boolean button10 = false;
 
@@ -66,10 +67,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    if(leftJoystick.getRawButton(4)){
-      leftEncoder.reset();
-      rightEncoder.reset();
-      navx.reset();
+    if (leftJoystick.getRawButton(4)) {
+        leftEncoder.reset();
+        rightEncoder.reset();
+        navx.reset();
     }
   }
 
@@ -94,6 +95,7 @@ public class Robot extends TimedRobot {
 
     if(leftJoystick.getRawButton(1)){
       button10 = false;
+      buttonNorth = false;
     }
 
     //double speedPct = 100;
@@ -127,6 +129,27 @@ public class Robot extends TimedRobot {
     // motorRight2.set(ControlMode.PercentOutput, rightSpeed);
     // motorRight3.set(ControlMode.PercentOutput, rightSpeed);
 
+      //never reset navx
+      //turn to North
+      if (leftJoystick.getRawButton(9)){
+          buttonNorth = true;
+      }
+      int yawTol = 2; //yawTolerance
+      if (buttonNorth) {
+          double currentYaw = navx.getYaw();
+          leftSpeed = 0;
+          rightSpeed = 0;
+          if (currentYaw > yawTol){
+              rightSpeed = 0.20;
+              leftSpeed = -0.20;
+          } else if (currentYaw < -yawTol){
+              leftSpeed = 0.20;
+              rightSpeed = -0.20;
+          } else {
+              buttonNorth = false;
+          }
+      }
+
     if(leftJoystick.getRawButton(10)) {
       button10 = true;
     }
@@ -156,11 +179,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-
   }
 
   @Override
   public void testPeriodic() {
 
   }
+
 }
