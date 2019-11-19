@@ -32,9 +32,8 @@ public class Robot extends TimedRobot {
   AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
 
   private boolean backwardPressed;
-
-
-  int firstCheck = 1;
+  private int firstCheck = 1;
+  final int twoFeet = 2754;
 
   public Robot() {
     motorRight1.setInverted(true);
@@ -87,49 +86,45 @@ public class Robot extends TimedRobot {
         leftEncoder.reset();
         rightEncoder.reset();
         navx.reset();
-
-        firstCheck = 1;
     }
 
     @Override
     public void teleopPeriodic() {
-        double leftSpeed = 0;
-        double rightSpeed = 0;
+        double robotSpeed = 0;
 
         if (leftJoystick.getRawButton(8)) {
             backwardPressed = true;
             firstCheck = 1;
         } else if(leftJoystick.getRawButton(1)){
             backwardPressed = false;
+            firstCheck = 1;
         }
 
         if (backwardPressed) {
 
-            if (leftEncoder.get() > -2754) {
-                leftSpeed = -0.25;
-                rightSpeed = -0.25;
+            if (leftEncoder.get() > -twoFeet) {
+                robotSpeed = -0.25;
             } else {
-                leftSpeed = 0;
-                rightSpeed = 0;
                 leftEncoder.reset();
                 backwardPressed = false;
+                                                                //sets power back to 0 bc periodic
             }
-
         }
 
         if (leftJoystick.getRawButton(7)) {
             firstCheck = 0;
             backwardPressed = false;
         }
-        if ((firstCheck == 0) && (leftEncoder.get() < 2754)) {
-            leftSpeed = .25;
-            rightSpeed = .25;
+        if ((firstCheck == 0) && (leftEncoder.get() < twoFeet)) {
+            robotSpeed = 0.25;
         }
         else if (!backwardPressed){
             leftEncoder.reset();
             firstCheck = 1;
+
+                                                                //sets power back to 0 bc periodic
         }
-        setDrivePower(leftSpeed,rightSpeed);
+        setDrivePower(robotSpeed,robotSpeed);
     }
 
     public void setDrivePower(double leftSide, double rightSide) {
