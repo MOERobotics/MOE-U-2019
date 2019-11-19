@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 
   AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
   boolean buttonNorth = false;
-  boolean button10 = false;
+  boolean buttonSouth = false;
 
   public Robot() {
     motorRight1.setInverted(true);
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
 
       if (leftJoystick.getRawButton(1)){
           buttonNorth = false;
-          button10 = false;
+          buttonSouth = false;
       }
 
     //double speedPct = 100;
@@ -108,7 +108,8 @@ public class Robot extends TimedRobot {
       double leftSpeed = 0;
       double rightSpeed = 0;
       double correction = 0.20;
-      double negativeCorrection = -0.20;
+      int yawTol = 2; //yawTolerance
+      double currentYaw = navx.getYaw();
 
     double joyY = -leftJoystick.getY();
     double joyX = leftJoystick.getX();
@@ -121,39 +122,37 @@ public class Robot extends TimedRobot {
       if (leftJoystick.getRawButton(9)){
           buttonNorth = true;
       }
-      int yawTol = 2; //yawTolerance
       if (buttonNorth) {
-          double currentYaw = navx.getYaw();
-          leftSpeed = 0;
-          rightSpeed = 0;
           if (currentYaw > yawTol){
-              rightSpeed = 0.20;
-              leftSpeed = -0.20;
+              rightSpeed = correction;
+              leftSpeed = -correction;
           } else if (currentYaw < -yawTol){
-              leftSpeed = 0.20;
-              rightSpeed = -0.20;
+              leftSpeed = correction;
+              rightSpeed = -correction;
           } else {
+              leftSpeed = 0;
+              rightSpeed = 0;
               buttonNorth = false;
           }
       }
 
       //turn to South
       if(leftJoystick.getRawButton(10)) {
-          button10 = true;
+          buttonSouth = true;
       }
-      if(button10){
-          if(navx.getYaw() > 0){
+      if(buttonSouth){
+          if(currentYaw > 0){
               leftSpeed = correction;
-              rightSpeed = negativeCorrection;
+              rightSpeed = -correction;
           }
-          else if(navx.getYaw() <= 0){
-              leftSpeed = negativeCorrection;
+          else if(currentYaw <= 0){
+              leftSpeed = -correction;
               rightSpeed = correction;
           }
-          if(navx.getYaw() > 178 || navx.getYaw() < -178){
+          if(currentYaw > (180 - yawTol) || currentYaw < (-180 + yawTol)){
               leftSpeed = 0;
               rightSpeed = 0;
-              button10 = false;
+              buttonSouth = false;
           }
       }
 
