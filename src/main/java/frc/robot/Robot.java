@@ -93,8 +93,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+        double leftSpeed = 0;
+        double rightSpeed = 0;
+
         if (leftJoystick.getRawButton(8)) {
             backwardPressed = true;
+            firstCheck = 1;
         } else if(leftJoystick.getRawButton(1)){
             backwardPressed = false;
         }
@@ -102,23 +106,26 @@ public class Robot extends TimedRobot {
         if (backwardPressed) {
 
             if (leftEncoder.get() > -2754) {
-                setDrivePower(-0.25, -0.25);
+                leftSpeed = -0.25;
+                rightSpeed = -0.25;
             } else {
-                setDrivePower(0.0, 0.0);
+                leftSpeed = 0;
+                rightSpeed = 0;
+                leftEncoder.reset();
                 backwardPressed = false;
             }
 
         }
-        double leftSpeed = 0;
-        double rightSpeed = 0;
+
         if (leftJoystick.getRawButton(7)) {
             firstCheck = 0;
+            backwardPressed = false;
         }
         if ((firstCheck == 0) && (leftEncoder.get() < 2754)) {
             leftSpeed = .25;
             rightSpeed = .25;
         }
-        else {
+        else if (!backwardPressed){
             leftEncoder.reset();
             firstCheck = 1;
         }
