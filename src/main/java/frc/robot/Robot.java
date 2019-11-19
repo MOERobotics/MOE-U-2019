@@ -56,7 +56,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("leftEncoderValue", leftEncoder.get());
     SmartDashboard.putNumber("rightEncoderValue", rightEncoder.get());
     SmartDashboard.putNumber("heading", navx.getYaw());
-    SmartDashboard.putBoolean("buttonNorth", buttonNorth);
   }
 
   @Override
@@ -117,7 +116,6 @@ public class Robot extends TimedRobot {
     //leftSpeed = joyY + joyX;
     //rightSpeed = joyY - joyX;
     //make sure to build every time you boot up build
-    int buttonHold = 1;
 
       //turn to North
       if (leftJoystick.getRawButton(9)){
