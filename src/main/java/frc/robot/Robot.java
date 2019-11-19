@@ -32,8 +32,7 @@ public class Robot extends TimedRobot {
 
     AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
 
-    int firstCheck = 1;
-    private boolean backwardPressed;
+    int direction = 0;
 
     public Robot() {
         motorRight1.setInverted(true);
@@ -92,40 +91,36 @@ public class Robot extends TimedRobot {
         leftEncoder.reset();
         rightEncoder.reset();
         navx.reset();
-        firstCheck = 1;
+        direction = 0;
     }
 
     @Override
     public void teleopPeriodic() {
         double leftSpeed = 0;
         double rightSpeed = 0;
-        if (leftJoystick.getRawButton(7)) {
-            firstCheck = 0;
+        double steadySpeed = .25;                                              // speed of movement
+        int encoderCheck = 2754;                                               // encoder value after traveling two feet
+        if (leftJoystick.getRawButton(1)) {                                    // this is kill switch, variable direction starts at 0
+            direction = 0;
         }
-        if ((firstCheck == 0) && (leftEncoder.get() < 2754)) {
-            leftSpeed = .25;
-            rightSpeed = .25;
-        } else if (!backwardPressed){
-            leftEncoder.reset();
-            firstCheck = 1;
+        else if ((direction == 0) && leftJoystick.getRawButton(7)) {           // this tells to go forward, direction changes to 1
+            direction = 1;
         }
-
-        if (leftJoystick.getRawButton(8)) {
-            backwardPressed = true;
-        } else if (leftJoystick.getRawButton(1)) {
-            backwardPressed = false;
+        else if ((direction == 0) && leftJoystick.getRawButton(8)) {           // this tells to go backward, direction changes to -1
+            direction = -1;
         }
-
-        if (backwardPressed) {
-
-            if (leftEncoder.get() > -2754) {
-                leftSpeed = -0.25;
-                rightSpeed = -0.25;
-            } else {
-                leftSpeed = 0;
-                rightSpeed = 0;
-                leftEncoder.reset();
-                backwardPressed = false;
+        if (!(direction == 0)) {
+            if ((direction == 1) && (leftEncoder.get() < encoderCheck)){       // sets speed to move forward if condition is unmet
+                leftSpeed = steadySpeed;
+                rightSpeed = steadySpeed;
+            }
+            else if ((direction == -1) && leftEncoder.get() > -encoderCheck){  // sets speed to move backward if condition is unmet
+                leftSpeed = -steadySpeed;
+                rightSpeed = -steadySpeed;
+            }
+            else {                                                             // when the task is completed
+                leftEncoder.reset();                                           // resets encoder and direction for ability to repeat
+                direction = 0;
             }
         }
         motorLeft1.set(ControlMode.PercentOutput, (leftSpeed));
