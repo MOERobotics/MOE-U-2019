@@ -32,13 +32,13 @@ public class Robot extends TimedRobot {
 
     AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
 
-  int firstCheck = 1;
-  private boolean backwardPressed;
+    int firstCheck = 1;
+    private boolean backwardPressed;
 
-  public Robot() {
-    motorRight1.setInverted(true);
-    motorRight2.setInverted(true);
-    motorRight3.setInverted(true);
+    public Robot() {
+        motorRight1.setInverted(true);
+        motorRight2.setInverted(true);
+        motorRight3.setInverted(true);
 
         motorLeft1.setNeutralMode(NeutralMode.Brake);
         motorLeft2.setNeutralMode(NeutralMode.Brake);
@@ -69,14 +69,14 @@ public class Robot extends TimedRobot {
     public void disabledInit() {
     }
 
-  @Override
-  public void disabledPeriodic() {
-    if (leftJoystick.getRawButton(4)) {
-      leftEncoder.reset();
-      rightEncoder.reset();
-      navx.reset();
+    @Override
+    public void disabledPeriodic() {
+        if (leftJoystick.getRawButton(4)) {
+            leftEncoder.reset();
+            rightEncoder.reset();
+            navx.reset();
+        }
     }
-  }
 
 
     @Override
@@ -92,55 +92,48 @@ public class Robot extends TimedRobot {
         leftEncoder.reset();
         rightEncoder.reset();
         navx.reset();
-        firstCheck = 0;
+        firstCheck = 1;
     }
 
-  @Override
-  public void teleopPeriodic() {
-      double leftSpeed = 0;
-      double rightSpeed = 0;
-      if (leftJoystick.getRawButton(7)) {
-          firstCheck = 0;
-      }
-      if ((firstCheck == 0) && (leftEncoder.get() < 2754)) {
-          leftSpeed = .25;
-          rightSpeed = .25;
-      } else {
-          leftEncoder.reset();
-          firstCheck = 1;
-      }
-      motorLeft1.set(ControlMode.PercentOutput, (leftSpeed));
-      motorLeft2.set(ControlMode.PercentOutput, (leftSpeed));
-      motorLeft3.set(ControlMode.PercentOutput, (leftSpeed));
-      motorRight1.set(ControlMode.PercentOutput, (rightSpeed));
-      motorRight2.set(ControlMode.PercentOutput, (rightSpeed));
-      motorRight3.set(ControlMode.PercentOutput, (rightSpeed));
+    @Override
+    public void teleopPeriodic() {
+        double leftSpeed = 0;
+        double rightSpeed = 0;
+        if (leftJoystick.getRawButton(7)) {
+            firstCheck = 0;
+        }
+        if ((firstCheck == 0) && (leftEncoder.get() < 2754)) {
+            leftSpeed = .25;
+            rightSpeed = .25;
+        } else if (!backwardPressed){
+            leftEncoder.reset();
+            firstCheck = 1;
+        }
 
-      if (leftJoystick.getRawButton(8)) {
-          backwardPressed = true;
-      } else if (leftJoystick.getRawButton(1)) {
-          backwardPressed = false;
-      }
+        if (leftJoystick.getRawButton(8)) {
+            backwardPressed = true;
+        } else if (leftJoystick.getRawButton(1)) {
+            backwardPressed = false;
+        }
 
-      if (backwardPressed) {
+        if (backwardPressed) {
 
-          if (leftEncoder.get() > -2754) {
-              setDrivePower(-0.25, -0.25);
-          } else {
-              setDrivePower(0.0, 0.0);
-              backwardPressed = false;
-          }
-
-      }
-  }
-
-    public void setDrivePower(double leftSide, double rightSide) {
-        motorLeft1.set(ControlMode.PercentOutput, leftSide);
-        motorLeft2.set(ControlMode.PercentOutput, leftSide);
-        motorLeft3.set(ControlMode.PercentOutput, leftSide);
-        motorRight1.set(ControlMode.PercentOutput, rightSide);
-        motorRight2.set(ControlMode.PercentOutput, rightSide);
-        motorRight3.set(ControlMode.PercentOutput, rightSide);
+            if (leftEncoder.get() > -2754) {
+                leftSpeed = -0.25;
+                rightSpeed = -0.25;
+            } else {
+                leftSpeed = 0;
+                rightSpeed = 0;
+                leftEncoder.reset();
+                backwardPressed = false;
+            }
+        }
+        motorLeft1.set(ControlMode.PercentOutput, (leftSpeed));
+        motorLeft2.set(ControlMode.PercentOutput, (leftSpeed));
+        motorLeft3.set(ControlMode.PercentOutput, (leftSpeed));
+        motorRight1.set(ControlMode.PercentOutput, (rightSpeed));
+        motorRight2.set(ControlMode.PercentOutput, (rightSpeed));
+        motorRight3.set(ControlMode.PercentOutput, (rightSpeed));
     }
 
     @Override
@@ -150,6 +143,4 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
     }
-
-
 }
