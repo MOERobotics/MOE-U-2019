@@ -40,21 +40,14 @@ public class Robot extends TimedRobot {
 
 	double targetYaw     = 0;
 	double yawCorrection = 0;
-	FuntionalPIDSource.Rate navxYawReader = new FuntionalPIDSource.Rate(() -> navx.getYaw());
-	PIDOutput correctionWriter = (double correction) -> yawCorrection = correction + (Math.signum(correction) * 0.2);
-
-	PIDController yawCorrector = new PIDController(
+	PIDController yawCorrector = FunctionalPIDControllerFactory.build(
 		0.001,
 		0,
 		0.01,
-		navxYawReader,
-		correctionWriter
-	) {{
-		setInputRange (-180,180);
-		setOutputRange(-0.8,0.8);
-		setContinuous (    true);
-		setEnabled    (   false);
-	}};
+		navx::getYaw,
+		(double correction) -> yawCorrection = correction + (Math.signum(correction) * 0.2),
+		PIDSourceType.kDisplacement
+	);
 
 	public Robot() {
 		motorRight1.setInverted(true);
@@ -67,6 +60,11 @@ public class Robot extends TimedRobot {
 		motorRight1.setNeutralMode(NeutralMode.Brake);
 		motorRight2.setNeutralMode(NeutralMode.Brake);
 		motorRight3.setNeutralMode(NeutralMode.Brake);
+
+		yawCorrector.setInputRange (-180,180);
+		yawCorrector.setOutputRange(-0.8,0.8);
+		yawCorrector.setContinuous (    true);
+		yawCorrector.setEnabled    (   false);
 	}
 
 
