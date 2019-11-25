@@ -93,69 +93,32 @@ public class Robot extends TimedRobot {
           buttonSouth = false;
       }
 
-    //double speedPct = 100;
-    //
-    //speedPct = - leftJoystick.getY();
-    //
-    //motorLeft1.set(ControlMode.PercentOutput, speedPct);
-    //motorLeft2.set(ControlMode.PercentOutput, speedPct);
-    //motorLeft3.set(ControlMode.PercentOutput, speedPct);
-    //motorRight1.set(ControlMode.PercentOutput, speedPct);
-    //motorRight2.set(ControlMode.PercentOutput, speedPct);
-    //motorRight3.set(ControlMode.PercentOutput, speedPct);
-
-
       double leftSpeed = 0;
       double rightSpeed = 0;
       double correction = 0.20;
       int yawTol = 2; //yawTolerance
       double currentYaw = navx.getYaw();
 
-    double joyY = -leftJoystick.getY();
-    double joyX = leftJoystick.getX();
-
-    //leftSpeed = joyY + joyX;
-    //rightSpeed = joyY - joyX;
-    //make sure to build every time you boot up build
-
-      //turn to North
       if (leftJoystick.getRawButton(9)){
           buttonNorth = true;
       }
-      if (buttonNorth) {
-          if (currentYaw > yawTol){
-              rightSpeed = correction;
+      if(leftJoystick.getRawButton(10)) {
+          buttonSouth = true;
+      }
+      if (buttonNorth || buttonSouth) {
+          if ((buttonNorth && currentYaw > yawTol) || (buttonSouth && currentYaw <= 0 && currentYaw > (-180 + yawTol))){
+              rightSpeed = correction;         //spin counter-clockwise
               leftSpeed = -correction;
-          } else if (currentYaw < -yawTol){
-              leftSpeed = correction;
+          } else if ((buttonNorth && currentYaw < -yawTol) || (buttonSouth && currentYaw > 0 && currentYaw < (180-yawTol))){
+              leftSpeed = correction;          //spin clockwise
               rightSpeed = -correction;
           } else {
               leftSpeed = 0;
               rightSpeed = 0;
               buttonNorth = false;
-          }
-      }
-
-      //turn to South
-      if(leftJoystick.getRawButton(10)) {
-          buttonSouth = true;
-      }
-      if(buttonSouth){
-          if(currentYaw > 0){
-              leftSpeed = correction;
-              rightSpeed = -correction;
-          }
-          else if(currentYaw <= 0){
-              leftSpeed = -correction;
-              rightSpeed = correction;
-          }
-          if(currentYaw > (180 - yawTol) || currentYaw < (-180 + yawTol)){
-              leftSpeed = 0;
-              rightSpeed = 0;
               buttonSouth = false;
           }
       }
-
 
     motorLeft1.set(ControlMode.PercentOutput, leftSpeed);
     motorLeft2.set(ControlMode.PercentOutput, leftSpeed);
