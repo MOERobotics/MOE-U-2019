@@ -33,6 +33,8 @@ public class Robot extends TimedRobot {
     AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
 
     int direction = 0;
+    int encoderCheck = 2754;                                               // encoder value after traveling two feet
+    int previousEncoder = 0;
 
     public Robot() {
         motorRight1.setInverted(true);
@@ -99,7 +101,6 @@ public class Robot extends TimedRobot {
         double leftSpeed = 0;
         double rightSpeed = 0;
         double steadySpeed = .25;                                              // speed of movement
-        int encoderCheck = 2754;                                               // encoder value after traveling two feet
         if (leftJoystick.getRawButton(1)) {                                    // this is kill switch, variable direction starts at 0
             direction = 0;
         }
@@ -110,16 +111,16 @@ public class Robot extends TimedRobot {
             direction = -1;
         }
         if (!(direction == 0)) {
-            if ((direction == 1) && (leftEncoder.get() < encoderCheck)){       // sets speed to move forward if condition is unmet
+            if ((direction == 1) && ((leftEncoder.get() - previousEncoder) < encoderCheck)){       // sets speed to move forward if condition is unmet
                 leftSpeed = steadySpeed;
                 rightSpeed = steadySpeed;
             }
-            else if ((direction == -1) && leftEncoder.get() > -encoderCheck){  // sets speed to move backward if condition is unmet
+            else if ((direction == -1) && (leftEncoder.get() - previousEncoder) > -encoderCheck){  // sets speed to move backward if condition is unmet
                 leftSpeed = -steadySpeed;
                 rightSpeed = -steadySpeed;
             }
-            else {                                                             // when the task is completed
-                leftEncoder.reset();                                           // resets encoder and direction for ability to repeat
+            else {                                                             // when the task is complete, resets to repeat
+                previousEncoder = leftEncoder.get();
                 direction = 0;
             }
         }
