@@ -20,7 +20,7 @@ public class Robot extends TimedRobot {
 
   CANSparkMax driveRightA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);
   CANSparkMax driveRightB = new CANSparkMax(1,  CANSparkMaxLowLevel.MotorType.kBrushless);
-  
+
   CANSparkMax driveLeftA  = new CANSparkMax(14, CANSparkMaxLowLevel.MotorType.kBrushless);
   CANSparkMax driveLeftB  = new CANSparkMax(15, CANSparkMaxLowLevel.MotorType.kBrushless);
 
