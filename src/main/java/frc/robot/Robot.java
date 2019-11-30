@@ -11,16 +11,25 @@ import edu.wpi.first.wpilibj.*;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.kauailabs.navx.frc.*;
+import com.revrobotics.*;
 
 
 
 public class Robot extends TimedRobot {
-  TalonSRX testTalon;
   AHRS navx;
 
+  CANSparkMax driveRightA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);
+  CANSparkMax driveRightB = new CANSparkMax(1,  CANSparkMaxLowLevel.MotorType.kBrushless);
+  
+  CANSparkMax driveLeftA  = new CANSparkMax(14, CANSparkMaxLowLevel.MotorType.kBrushless);
+  CANSparkMax driveLeftB  = new CANSparkMax(15, CANSparkMaxLowLevel.MotorType.kBrushless);
+
+  CANEncoder encoderRight = new CANEncoder(driveRightA);
+  CANEncoder encoderLeft  = new CANEncoder(driveLeftA);
 
   @Override
   public void robotInit() {
+
   }
 
   @Override
