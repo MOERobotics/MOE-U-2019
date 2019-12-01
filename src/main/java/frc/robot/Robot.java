@@ -29,6 +29,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    driveLeftA.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    driveLeftB.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    driveRightA.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    driveRightB.setIdleMode(CANSparkMax.IdleMode.kBrake);
+
+    driveLeftA.set(0.0);
+    driveLeftB.set(0.0);
+    driveRightA.set(0.0);
+    driveRightB.set(0.0);
 
   }
 
@@ -38,6 +47,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+    driveLeftA.set(0.0);
+    driveLeftB.set(0.0);
+    driveRightA.set(0.0);
+    driveRightB.set(0.0);
   }
 
   @Override
