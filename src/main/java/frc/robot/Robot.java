@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
   Encoder rightEncoder = new Encoder(2,3, false, CounterBase.EncodingType.k1X);
 
   double goalYaw = 0;
-  boolean isTurningLeft;
+  boolean isTurningLeft = false;
   double error;
 
   AHRS navx;
@@ -93,6 +93,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     isTurningLeft = false;
+    double leftSpeed = 0;
+    double rightSpeed = 0;
   }
 
   @Override
