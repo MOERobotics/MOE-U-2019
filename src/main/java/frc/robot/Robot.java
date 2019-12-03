@@ -100,62 +100,13 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    //double speedPct = 100;
-    //
-    //speedPct = - leftJoystick.getY();
-    //
-    ////please no bully the human
-    //motorLeft1 .set(ControlMode.PercentOutput, speedPct);
-    //motorLeft2 .set(ControlMode.PercentOutput, speedPct);
-    //motorLeft3 .set(ControlMode.PercentOutput, speedPct);
-    //motorRight1.set(ControlMode.PercentOutput, speedPct);
-    //motorRight2.set(ControlMode.PercentOutput, speedPct);
-    //motorRight3.set(ControlMode.PercentOutput, speedPct);
-
+    //isTurningLeft = false;
 
     double leftSpeed = 0;
     double rightSpeed = 0;
 
-    double joyY = -leftJoystick.getY();
-    double joyX = leftJoystick.getX();
     double currentYaw = navx.getYaw();
 
-
-/* 
-         if (leftJoystick.getRawButton(1)) {
-
-
-      if (currentYaw > 1) {
-        rightSpeed = 0.25;
-        leftSpeed = 0.2;
-      } else if (currentYaw < -1) {
-        leftSpeed = 0.25;
-        rightSpeed = 0.2;
-      } else {
-        rightSpeed = 0.25;
-        leftSpeed = 0.25;
-      }  
-
-*/
-
-    
-
-                  /*
-                 double leftEncode = leftEncoder.get();
-                 double rightEncode = rightEncoder.get();
-
-
-                   if (leftEncode > rightEncode) {
-                       rightSpeed = 0.25;
-                       leftSpeed = 0.2;
-                 } else if (rightEncode > leftEncode) {
-                       leftSpeed = 0.25;
-                       rightSpeed = 0.2;
-                 } else {
-                       rightSpeed = 0.25;
-                       leftSpeed = 0.25;
-                 }
-                  */
 
 
     if (leftJoystick.getRawButtonPressed(5)) {
@@ -180,20 +131,25 @@ public class Robot extends TimedRobot {
     }
 
     if(isTurningLeft) {
-      } else if (error > 0) {
-        rightSpeed = .2;
-        leftSpeed = -.2;
-      } else if (error < 0) {
+      if (error > 0) {
         rightSpeed = -.2;
         leftSpeed = .2;
+      } else if (error < 0) {
+        rightSpeed = .2;
+        leftSpeed = -.2;
       }
 
+      if(Math.abs(error) < 3) {
+        isTurningLeft = false;
+        rightSpeed = 0;
+        leftSpeed = 0;
+      }
 
-    if (Math.abs(error) < 3) {
-      isTurningLeft = false;
-      rightSpeed = 0;
-      leftSpeed = 0;
     }
+
+
+
+
 
 
 
