@@ -32,6 +32,12 @@ public class Robot extends TimedRobot {
   boolean isTurningLeft = false;
   double error;
 
+  final double TICKS_TO_INCH = 112.08;
+  public int autoStep;
+  boolean at10Feet = false;
+
+
+
   AHRS navx;
 
   public Robot() {
@@ -84,10 +90,22 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    autoStep = 0;
   }
 
   @Override
-  public void autonomousPeriodic() {
+  public void autonomousPeriodic() { //Task: 10ft forward, 90deg left
+
+    switch (autoStep){
+      case 0:
+
+
+
+
+
+    }
+
+
   }
 
   @Override
@@ -99,8 +117,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
-    //isTurningLeft = false;
 
     double leftSpeed = 0;
     double rightSpeed = 0;
