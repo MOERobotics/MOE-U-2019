@@ -170,10 +170,10 @@ public class Robot extends TimedRobot {
     }
     error = (goalYaw - currentYaw);
 
-    if (error > 360) {
+    if (error > 180) {
       error = error - 360;
     }
-    if (error < -360) {
+    if (error < -180) {
       error = error + 360;
     }
 
