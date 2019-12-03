@@ -177,13 +177,13 @@ public class Robot extends TimedRobot {
       error = error + 360;
     }
 
-    if (isTurningLeft) {
+    if(isTurningLeft) {
       } else if (error > 0) {
-        rightSpeed = -.2;
-        leftSpeed = .2;
-      } else if (error < 0) {
         rightSpeed = .2;
         leftSpeed = -.2;
+      } else if (error < 0) {
+        rightSpeed = -.2;
+        leftSpeed = .2;
       }
 
 
