@@ -12,46 +12,19 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.kauailabs.navx.frc.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.GenericRobots.Camoelot;
+import frc.robot.GenericRobots.GenericRobot;
+import frc.robot.GenericRobots.KeerthanPractice1;
 
 
 public class Robot extends TimedRobot {
-    TalonSRX testTalon;
-
-    TalonSRX motorLeft1 = new TalonSRX(12);
-    TalonSRX motorLeft2 = new TalonSRX(13);
-    TalonSRX motorLeft3 = new TalonSRX(14);
-    TalonSRX motorRight1 = new TalonSRX(1);
-    TalonSRX motorRight2 = new TalonSRX(2);
-    TalonSRX motorRight3 = new TalonSRX(3);
+    GenericRobot robbit = new KeerthanPractice1();
 
     Joystick leftJoystick = new Joystick(0);
-
-
-    Encoder leftEncoder = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
-    Encoder rightEncoder = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
-
-    AHRS navx = new AHRS(SPI.Port.kMXP, (byte) 50);
 
     int direction = 0;
     int encoderCheck = 2754;                                               // encoder value after traveling two feet
     int previousEncoder = 0;
-
-    public Robot() {
-        motorRight1.setInverted(true);
-        motorRight2.setInverted(true);
-        motorRight3.setInverted(true);
-
-        motorLeft1.setNeutralMode(NeutralMode.Brake);
-        motorLeft2.setNeutralMode(NeutralMode.Brake);
-        motorLeft3.setNeutralMode(NeutralMode.Brake);
-        motorRight1.setNeutralMode(NeutralMode.Brake);
-        motorRight2.setNeutralMode(NeutralMode.Brake);
-        motorRight3.setNeutralMode(NeutralMode.Brake);
-
-        navx.getYaw();
-
-    }
-
 
     @Override
     public void robotInit() {
@@ -60,9 +33,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
 
-        SmartDashboard.putNumber("leftEncoderValue", leftEncoder.get());
-        SmartDashboard.putNumber("rightEncoderValue", rightEncoder.get());
-        SmartDashboard.putNumber("heading", navx.getYaw());
+        SmartDashboard.putNumber("leftEncoderValue", robbit.getLeftDistanceTicks());
+        SmartDashboard.putNumber("rightEncoderValue", robbit.getRightDistanceTicks());
+        SmartDashboard.putNumber("heading", robbit.getHeadingDegrees());
 
     }
 
@@ -73,9 +46,9 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
         if (leftJoystick.getRawButton(4)) {
-            leftEncoder.reset();
-            rightEncoder.reset();
-            navx.reset();
+            robbit.resetHeading();
+            robbit.resetLeftEncoder();
+            robbit.resetRightEncoder();
         }
     }
 
@@ -90,9 +63,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        leftEncoder.reset();
-        rightEncoder.reset();
-        navx.reset();
+        robbit.resetLeftEncoder();
+        robbit.resetRightEncoder();
+        robbit.resetHeading();
         direction = 0;
     }
 
@@ -100,36 +73,15 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         double leftSpeed = 0;
         double rightSpeed = 0;
-        double steadySpeed = .25;                                              // speed of movement
-        if (leftJoystick.getRawButton(1)) {                                    // this is kill switch, variable direction starts at 0
-            direction = 0;
-        }
-        else if ((direction == 0) && leftJoystick.getRawButton(7)) {           // this tells to go forward, direction changes to 1
-            direction = 1;
-        }
-        else if ((direction == 0) && leftJoystick.getRawButton(8)) {           // this tells to go backward, direction changes to -1
-            direction = -1;
-        }
-        if (!(direction == 0)) {
-            if ((direction == 1) && ((leftEncoder.get() - previousEncoder) < encoderCheck)){       // sets speed to move forward if condition is unmet
-                leftSpeed = steadySpeed;
-                rightSpeed = steadySpeed;
-            }
-            else if ((direction == -1) && (leftEncoder.get() - previousEncoder) > -encoderCheck){  // sets speed to move backward if condition is unmet
-                leftSpeed = -steadySpeed;
-                rightSpeed = -steadySpeed;
-            }
-            else {                                                             // when the task is complete, resets to repeat
-                previousEncoder = leftEncoder.get();
-                direction = 0;
-            }
-        }
-        motorLeft1.set(ControlMode.PercentOutput, (leftSpeed));
-        motorLeft2.set(ControlMode.PercentOutput, (leftSpeed));
-        motorLeft3.set(ControlMode.PercentOutput, (leftSpeed));
-        motorRight1.set(ControlMode.PercentOutput, (rightSpeed));
-        motorRight2.set(ControlMode.PercentOutput, (rightSpeed));
-        motorRight3.set(ControlMode.PercentOutput, (rightSpeed));
+
+        double joyY = leftJoystick.getY();
+        double joyX = leftJoystick.getX();
+
+        leftSpeed = joyY + joyX;
+        rightSpeed = joyY - joyX;
+
+        robbit.setMotorPowers(leftSpeed, rightSpeed);
+
     }
 
     @Override
