@@ -109,8 +109,9 @@ public class Robot extends TimedRobot {
     {
       leftSpeed = turnPower;
       rightSpeed = -turnPower;
-      if (System.currentTimeMillis()-startTime > turnTime)
+      if (System.currentTimeMillis()-startTime > turnTime) {
         turning = false;
+      }
     }
 
     robbit.setMotorPowers(leftSpeed, rightSpeed);
