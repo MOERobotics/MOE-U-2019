@@ -29,6 +29,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    robbit.shiftUp();
   }
 
   @Override
@@ -73,10 +74,47 @@ public class Robot extends TimedRobot {
     double joyY = - leftJoystick.getY();
     double joyX = leftJoystick.getX();
 
+    long    startTime = 0;
+
+    long turnTime = 100;
+    double turnPower = 0.15;
+    boolean turning = false;
+
+
+    if (Math.abs(joyX)<0.1) {
+      joyX = 0;
+    }
+    if (Math.abs(joyY)<0.1) {
+      joyY = 0;
+    }
     leftSpeed = joyY + joyX;
     rightSpeed = joyY - joyX;
 
+
+    if (leftJoystick.getRawButtonPressed(16)) {
+      robbit.shiftDown();
+    }
+
+    if (leftJoystick.getRawButtonPressed(11)) {
+      robbit.shiftUp();
+    }
+
+    if (leftJoystick.getRawButtonPressed(12)) {
+      robbit.resetHeading();
+      startTime = System.currentTimeMillis();
+      turning = true;
+    }
+
+    if (turning)
+    {
+      leftSpeed = turnPower;
+      rightSpeed = -turnPower;
+      if (System.currentTimeMillis()-startTime > turnTime)
+        turning = false;
+    }
+
     robbit.setMotorPowers(leftSpeed, rightSpeed);
+
   }
 
   @Override

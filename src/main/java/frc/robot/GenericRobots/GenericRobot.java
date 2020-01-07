@@ -13,4 +13,8 @@ public abstract class GenericRobot {
     public abstract double getRightDistanceTicks();
     public abstract void resetLeftEncoders();
     public abstract void resetRightEncoders();
+
+    public abstract void shiftUp();
+    public abstract void shiftDown();
+
 }

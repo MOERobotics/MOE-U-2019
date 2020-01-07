@@ -32,6 +32,7 @@ public class KeerthanPractice1 extends GenericRobot{
         driveLeftB.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         driveRightA.setInverted(true);
+
     }
 
     @Override
@@ -49,6 +50,16 @@ public class KeerthanPractice1 extends GenericRobot{
     public void resetHeading() {
         navx.reset();
     }
+
+    public void shiftUp () {
+        absolutelyUseless.set(true);
+    }
+
+    public void shiftDown () {
+        absolutelyUseless.set(false);
+
+    }
+
 
     @Override
     public double getLeftDistanceTicks() {

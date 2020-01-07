@@ -67,4 +67,7 @@ public class Camoelot extends GenericRobot {
     public void resetRightEncoders() {
         rightEncoder.reset();
     }
+
+    public void shiftUp () {};
+    public void shiftDown () {};
 }
