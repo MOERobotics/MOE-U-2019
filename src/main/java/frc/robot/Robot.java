@@ -79,7 +79,9 @@ public class Robot extends TimedRobot {
     long turnTime = 100;
     double turnPower = 0.15;
     boolean turning = false;
+    double powerIncrement = 0.05; //tbd
 
+    SmartDashboard.putNumber("turnPower", turnPower); //does this have to be in robotPeriodic?
 
     if (Math.abs(joyX)<0.1) {
       joyX = 0;
@@ -103,6 +105,14 @@ public class Robot extends TimedRobot {
       robbit.resetHeading();
       startTime = System.currentTimeMillis();
       turning = true;
+    }
+
+    if (leftJoystick.getRawButtonPressed(13)) { //increase turnPower, button tbd
+      turnPower = turnPower + powerIncrement;
+    }
+
+    if (leftJoystick.getRawButtonPressed(14)) { //decrease turnPower, button tbd
+      turnPower = turnPower - powerIncrement;
     }
 
     if (turning)
