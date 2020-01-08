@@ -46,6 +46,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
 
     //limelight
+    //Workflow controls are at http://10.3.65.11:5801 or http://limelight.local:5801
     try {
       NetworkTableEntry tx = table.getEntry("tx");
       NetworkTableEntry ty = table.getEntry("ty");
