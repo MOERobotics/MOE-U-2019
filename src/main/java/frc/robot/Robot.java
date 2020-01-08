@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -15,13 +18,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.GenericRobots.Camoelot;
 import frc.robot.GenericRobots.GenericRobot;
 import frc.robot.GenericRobots.KeerthanPractice1;
-
+import frc.robot.PIDModule;
 
 public class Robot extends TimedRobot {
 
   GenericRobot robbit = new KeerthanPractice1();
-
   Joystick leftJoystick = new Joystick(0);
+
+  PIDModule MovementPID = new PIDModule(1.0e-3,1.0e-4,1.0e-4);
+
+  NetworkTable table;
 
   public Robot() {
 
@@ -29,11 +35,31 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    try {
+      table = NetworkTableInstance.getDefault().getTable("limelight");
+    } catch (Exception e) { }
+
     robbit.shiftUp();
   }
 
   @Override
   public void robotPeriodic() {
+
+    //limelight
+    try {
+      NetworkTableEntry tx = table.getEntry("tx");
+      NetworkTableEntry ty = table.getEntry("ty");
+      NetworkTableEntry ta = table.getEntry("ta");
+
+      double limeX = tx.getDouble(0.0);
+      double limeY = ty.getDouble(0.0);
+      double limeArea = ta.getDouble(0.0);
+
+      SmartDashboard.putNumber("Limelight X", limeX);
+      SmartDashboard.putNumber("Limelight Y", limeY);
+      SmartDashboard.putNumber("Limelight Area", limeArea);
+    } catch (Exception e) {}
+
     SmartDashboard.putNumber("leftEncoderValue", robbit.getLeftDistanceTicks());
     SmartDashboard.putNumber("rightEncoderValue", robbit.getRightDistanceTicks());
     SmartDashboard.putNumber("heading", robbit.getHeadingDegrees());
