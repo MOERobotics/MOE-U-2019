@@ -29,6 +29,11 @@ public class Robot extends TimedRobot {
 
   NetworkTable table;
 
+  long turnTime = 100;
+  double turnPower = 0.15;
+  boolean turning = false;
+  double powerIncrement = 0.05; //tbd
+
   public Robot() {
 
   }
@@ -64,6 +69,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("leftEncoderValue", robbit.getLeftDistanceTicks());
     SmartDashboard.putNumber("rightEncoderValue", robbit.getRightDistanceTicks());
     SmartDashboard.putNumber("heading", robbit.getHeadingDegrees());
+    SmartDashboard.putNumber("turnPower", turnPower);
   }
 
   @Override
@@ -103,12 +109,9 @@ public class Robot extends TimedRobot {
 
     long    startTime = 0;
 
-    long turnTime = 100;
-    double turnPower = 0.15;
-    boolean turning = false;
-    double powerIncrement = 0.05; //tbd
 
-    SmartDashboard.putNumber("turnPower", turnPower); //does this have to be in robotPeriodic?
+
+
 
     if (Math.abs(joyX)<0.1) {
       joyX = 0;
