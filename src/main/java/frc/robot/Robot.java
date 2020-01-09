@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
     }
 
     if (leftJoystick.getRawButtonPressed(12)) {
-      robbit.resetHeading();
+      //robbit.resetHeading();
       startTime = System.currentTimeMillis();
       turning = true;
     }
