@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
   long turnTime = 100;
   double turnPower = 0.15;
   boolean turning = false;
-  double powerIncrement = 0.05; //tbd
+  double powerIncrement = 0.01; //tbd
   String gearBoi = "low gear";
 
   public Robot() {
@@ -73,6 +73,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("turnPower", turnPower);
     SmartDashboard.putNumber("turn time", turnTime);
     SmartDashboard.putString("Gear State", gearBoi);
+//    SmartDashboard.putNumber("turn time", turnTime);
+//    SmartDashboard.putNumber("turn time", turnTime);
+
   }
 
   @Override
@@ -137,7 +140,7 @@ public class Robot extends TimedRobot {
     }
 
     if (leftJoystick.getRawButtonPressed(12)) {
-      //robbit.resetHeading();
+      robbit.resetHeading();
       startTime = System.currentTimeMillis();
       turning = true;
     }
@@ -150,12 +153,17 @@ public class Robot extends TimedRobot {
       turnPower = turnPower - powerIncrement;
     }
 
-    if (leftJoystick.getRawButton(7)) { //increase time
+    if (leftJoystick.getRawButtonPressed(7)) { //increase time
       turnTime += 10;
     }
 
-    if (leftJoystick.getRawButton(8)) { //decrease time
-      turnPower -= 10;
+    if (leftJoystick.getRawButtonPressed(8)) { //decrease time
+      turnTime -= 10;
+    }
+
+    if (leftJoystick.getRawButton(15)) {
+      leftSpeed = -1;
+      rightSpeed = -1;
     }
 
 
