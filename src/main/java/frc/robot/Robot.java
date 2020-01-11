@@ -20,6 +20,8 @@ import frc.robot.GenericRobots.GenericRobot;
 import frc.robot.GenericRobots.KeerthanPractice1;
 import frc.robot.PIDModule;
 
+import frc.robot.DoNothingAuto;
+
 public class Robot extends TimedRobot {
 
   GenericRobot robbit = new KeerthanPractice1();
@@ -35,12 +37,24 @@ public class Robot extends TimedRobot {
   double powerIncrement = 0.01; //tbd
   String gearBoi = "low gear";
 
+  DoNothingAuto myAuto = new DoNothingAuto(); /* Creates an instance of an auto routine. */
+
+  /* Programming team.
+    Create instances of your auto routines to be used below.
+    Every auto mission gets its own class.
+    To create a new class, File>New>Java class.
+   */
+
   public Robot() {
 
   }
 
   @Override
   public void robotInit() {
+
+    GoStraightAuto myAuto = new GoStraightAuto();
+    myAuto.robot = robbit; /* Gives the auto routine access to our robot methods. */
+
     try {
       table = NetworkTableInstance.getDefault().getTable("limelight");
     } catch (Exception e) { }
@@ -73,9 +87,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("turnPower", turnPower);
     SmartDashboard.putNumber("turn time", turnTime);
     SmartDashboard.putString("Gear State", gearBoi);
-//    SmartDashboard.putNumber("turn time", turnTime);
-//    SmartDashboard.putNumber("turn time", turnTime);
-
   }
 
   @Override
@@ -84,6 +95,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+
+    /* Programming team.
+    Write some good code here that changes which auto routine is using the joystick buttons.
+    For instance, button 14 might select auto routine A.  button 15 might select auto routine B.
+     */
+
     if (leftJoystick.getRawButton(4)) {
         robbit.resetLeftEncoders();
         robbit.resetRightEncoders();
@@ -93,10 +110,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    myAuto.init();
   }
 
   @Override
   public void autonomousPeriodic() {
+    myAuto.run();
   }
 
   @Override
@@ -114,10 +133,6 @@ public class Robot extends TimedRobot {
     double joyX = leftJoystick.getX();
 
     long    startTime = 0;
-
-
-
-
 
     if (Math.abs(joyX)<0.1) {
       joyX = 0;
@@ -137,33 +152,6 @@ public class Robot extends TimedRobot {
     if (leftJoystick.getRawButtonPressed(11)) {
       robbit.shiftUp();
       gearBoi = "HIGH gear";
-    }
-
-    if (leftJoystick.getRawButtonPressed(12)) {
-      robbit.resetHeading();
-      startTime = System.currentTimeMillis();
-      turning = true;
-    }
-
-    if (leftJoystick.getRawButtonPressed(13)) { //increase turnPower, button tbd
-      turnPower = turnPower + powerIncrement;
-    }
-
-    if (leftJoystick.getRawButtonPressed(14)) { //decrease turnPower, button tbd
-      turnPower = turnPower - powerIncrement;
-    }
-
-    if (leftJoystick.getRawButtonPressed(7)) { //increase time
-      turnTime += 10;
-    }
-
-    if (leftJoystick.getRawButtonPressed(8)) { //decrease time
-      turnTime -= 10;
-    }
-
-    if (leftJoystick.getRawButton(15)) {
-      leftSpeed = -1;
-      rightSpeed = -1;
     }
 
 
